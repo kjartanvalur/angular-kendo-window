@@ -8,4 +8,4 @@ own template and controller
 
 example/demo:
 
-http://jsbin.com/rocad/1/edit
+http://jsbin.com/rocad/2/edit
