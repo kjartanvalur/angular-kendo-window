@@ -235,7 +235,8 @@ angular.module('kendo.window', [])
 
                     templateAndResolvePromise.then(function () {
 
-                        
+                        $('body,html').scrollTop(0);
+
                         var opts = {
                             title: windowOptions.title,
                             modal: true,
@@ -279,9 +280,11 @@ angular.module('kendo.window', [])
                                 if (autofocusElements.length > 0) {
                                     autofocusElements[0].focus();
                                 }
+                                
                             };
                         }
 
+                        
                         if (windowOptions.center == null || windowOptions.center == false) {
                             var x = $(window).width() / 2;
                             var y = $(window).height() / 2;
