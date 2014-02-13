@@ -235,9 +235,11 @@ angular.module('kendo.window', [])
 
                     templateAndResolvePromise.then(function () {
 
+                        
                         var opts = {
                             title: windowOptions.title,
                             modal: true,
+                            width: 500,
                             actions: ["Close"],
                             visible: false,
                             close: function (e) {
@@ -248,7 +250,6 @@ angular.module('kendo.window', [])
                         if (windowOptions.width) {
                             opts.width = windowOptions.width;
                         }
-
                         if (windowOptions.height) {
                             opts.height = windowOptions.height;
                         }
@@ -281,10 +282,30 @@ angular.module('kendo.window', [])
                             };
                         }
 
+                        if (windowOptions.center == null || windowOptions.center == false) {
+                            var x = $(window).width() / 2;
+                            var y = $(window).height() / 2;
+                            
+                            var h = 600;
+                            if (opts.height) {
+                                h = opts.height;
+                            }
+                            
+
+                            opts.position = {
+                                top: y - (h / 2),
+                                left: x - (opts.width / 2)
+                            };
+
+                        }
 
                         var wnd = $("#" + windowInstance.id).kendoWindow(opts);
                         var dialog = $("#" + windowInstance.id).data("kendoWindow");
-                        dialog.open().center();
+                        dialog.open();
+
+                        if (windowOptions.center != null || windowOptions.center == true) {
+                            dialog.center();
+                        }
 
                         windowOpenedDeferred.resolve(true);
 
