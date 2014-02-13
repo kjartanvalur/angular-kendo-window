@@ -96,7 +96,7 @@ angular.module('kendo.window', [])
             });
 
 
-            var angularDomEl = angular.element('<div id="'+ windowInstance.id +'"></div>');
+            var angularDomEl = angular.element('<div id="' + windowInstance.id + '"></div>');
             angularDomEl.attr('window-class', kWindow.windowClass);
             angularDomEl.attr('index', openedWindows.length() - 1);
             angularDomEl.html(kWindow.content);
@@ -193,7 +193,7 @@ angular.module('kendo.window', [])
                       $q.all([getTemplatePromise(windowOptions)].concat(getResolvePromises(windowOptions.resolve)));
 
 
-                   
+
                     templateAndResolvePromise.then(function resolveSuccess(tplAndVars) {
 
 
@@ -268,10 +268,21 @@ angular.module('kendo.window', [])
                                 opts.resizable = false;
                             }
                         }
-                        
-                         
-                        
-                        var wnd = $("#"+ windowInstance.id).kendoWindow(opts);
+
+                        if (windowOptions.activate != null) {
+                            opts.activate = windowOptions.activate;
+                        }
+                        else {
+                            opts.activate = function () {
+                                var autofocusElements = $(":input[autofocus]");
+                                if (autofocusElements.length > 0) {
+                                    autofocusElements[0].focus();
+                                }
+                            };
+                        }
+
+
+                        var wnd = $("#" + windowInstance.id).kendoWindow(opts);
                         var dialog = $("#" + windowInstance.id).data("kendoWindow");
                         dialog.open().center();
 
