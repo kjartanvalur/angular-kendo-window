@@ -245,6 +245,13 @@ angular.module('kendo.window', [])
                             visible: false,
                             close: function (e) {
                                 windowInstance.close(null);
+                            },
+                            activate: function () {
+                                var autofocusElements = $(":input[autofocus]");
+                                if (autofocusElements.length > 0) {
+                                    autofocusElements[0].focus();
+                                }
+                                windowOpenedDeferred.resolve(true);
                             }
                         };
 
@@ -271,29 +278,16 @@ angular.module('kendo.window', [])
                             }
                         }
 
-                        if (windowOptions.activate != null) {
-                            opts.activate = windowOptions.activate;
-                        }
-                        else {
-                            opts.activate = function () {
-                                var autofocusElements = $(":input[autofocus]");
-                                if (autofocusElements.length > 0) {
-                                    autofocusElements[0].focus();
-                                }
-                                
-                            };
-                        }
 
-                        
                         if (windowOptions.center == null || windowOptions.center == false) {
                             var x = $(window).width() / 2;
                             var y = $(window).height() / 2;
-                            
+
                             var h = 600;
                             if (opts.height) {
                                 h = opts.height;
                             }
-                            
+
 
                             opts.position = {
                                 top: y - (h / 2),
@@ -310,7 +304,7 @@ angular.module('kendo.window', [])
                             dialog.center();
                         }
 
-                        windowOpenedDeferred.resolve(true);
+
 
                     }, function () {
                         windowOpenedDeferred.reject(false);
