@@ -10,4 +10,4 @@ This is highly influenced by UI Bootstrap modal feature.
 
 example/demo:
 
-http://jsbin.com/rocad/2/edit
+http://plnkr.co/edit/LGgRjZZebtLzxMZsTPid?p=preview
