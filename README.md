@@ -30,5 +30,5 @@ This is highly influenced by UI Bootstrap modal feature.
 </pre>
 <h1>Demo</h1>
 
-<a href='http://plnkr.co/edit/LGgRjZZebtLzxMZsTPid?p=preview' class='button primary'>Plunkr</a>
+<button type='button' href='http://plnkr.co/edit/LGgRjZZebtLzxMZsTPid?p=preview' class='button primary'>Plunkr</button>
 
