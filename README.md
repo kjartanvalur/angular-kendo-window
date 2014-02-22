@@ -8,6 +8,6 @@ own template and controller.
 
 This is highly influenced by UI Bootstrap modal feature.
 
-example/demo:
+<h1>Demo</h1>
 
 http://plnkr.co/edit/LGgRjZZebtLzxMZsTPid?p=preview
