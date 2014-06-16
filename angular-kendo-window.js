@@ -197,7 +197,7 @@ angular.module('kendo.window', [])
                     templateAndResolvePromise.then(function resolveSuccess(tplAndVars) {
 
 
-                        var kendoWindow = undefined;
+                        var kendoWindow;
                         var windowScope = (windowOptions.scope || $rootScope).$new();
                         windowScope.$close = windowInstance.close;
                         windowScope.$dismiss = windowInstance.dismiss;
@@ -235,7 +235,7 @@ angular.module('kendo.window', [])
 
                     templateAndResolvePromise.then(function () {
 
-                        $('body,html').scrollTop(0);
+                        
 
                         var opts = {
                             title: windowOptions.title,
@@ -261,13 +261,13 @@ angular.module('kendo.window', [])
                         if (windowOptions.height) {
                             opts.height = windowOptions.height;
                         }
-                        if (windowOptions.modal != null) {
+                        if (windowOptions.modal !== null) {
                             opts.modal = windowOptions.modal;
                         }
                         if (windowOptions.actions) {
                             opts.actions = windowOptions.actions;
                         }
-                        if (windowOptions.noMaxHeight == null || windowOptions.noMaxHeight == false) {
+                        if (windowOptions.noMaxHeight === null || windowOptions.noMaxHeight === false) {
 
                             if (windowOptions.maxHeight) {
                                 opts.maxHeight = windowOptions.maxHeight;
@@ -279,7 +279,7 @@ angular.module('kendo.window', [])
                         }
 
 
-                        if (windowOptions.center == null || windowOptions.center == false) {
+                        if (windowOptions.center === null || windowOptions.center === false) {
                             var x = $(window).width() / 2;
                             var y = $(window).height() / 2;
 
@@ -300,7 +300,7 @@ angular.module('kendo.window', [])
                         var dialog = $("#" + windowInstance.id).data("kendoWindow");
                         dialog.open();
 
-                        if (windowOptions.center != null || windowOptions.center == true) {
+                        if (windowOptions.center !== null || windowOptions.center === true) {
                             dialog.center();
                         }
 
