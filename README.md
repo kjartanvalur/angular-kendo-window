@@ -31,5 +31,5 @@ This is highly influenced by UI Bootstrap modal feature.
 <h1>Demo</h1>
 
 <h3>
-<a target='_blank' href='http://plnkr.co/edit/LGgRjZZebtLzxMZsTPid?p=preview'>Plunkr demo</a>
+<a target='_blank' href='http://plnkr.co/edit/0AgWTigMDEVZEYcCSktq?p=preview'>Plunkr demo</a>
 </h3>
