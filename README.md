@@ -6,7 +6,7 @@ Angular Kendo Window
 Here is a angular directive that helps create KendoUI windows with its
 own template and controller.
 
-This is highly influenced by UI Bootstrap modal feature.
+<b>This is highly influenced by <a target='_blank' href='http://angular-ui.github.io/bootstrap/#/modal'>UI Bootstrap modal directive</a>.</b>
 
 <h1>Example</h1>
 <pre>
