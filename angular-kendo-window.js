@@ -126,6 +126,9 @@ angular.module('kendo.window', [])
                     deactivate: function () {
                         scope.done();
                     },
+                    activate: function () {
+                        windowOptions.openedDeferred.resolve(true);
+                    },
                     visible: false,
                     width: 500,
                     actions: ["Close"]
@@ -348,6 +351,7 @@ angular.module('kendo.window', [])
             openedWindows.add(windowInstance, {
                 deferred: modal.deferred,
                 renderDeferred: modal.renderDeferred,
+                openedDeferred: modal.openedDeferred,
                 modalScope: modal.scope,
                 title: modal.title,
                 modal: modal.modal,
@@ -553,6 +557,7 @@ angular.module('kendo.window', [])
                         $modalStack.open(windowInstance, {
                             scope: modalScope,
                             deferred: modalResultDeferred,
+                            openedDeferred: modalOpenedDeferred,
                             renderDeferred: modalRenderDeferred,
                             content: tplAndVars[0],
                             title: modalOptions.title,
@@ -564,7 +569,6 @@ angular.module('kendo.window', [])
                             maxHeight: modalOptions.maxHeight,
                             noMaxHeight: modalOptions.noMaxHeight
                         });
-                        modalOpenedDeferred.resolve(true);
                     }, function resolveError(reason) {
                         modalOpenedDeferred.reject(reason);
                         modalResultDeferred.reject(reason);
