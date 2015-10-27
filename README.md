@@ -31,5 +31,5 @@ own template and controller.
 <h1>Demo</h1>
 
 <h3>
-<a target='_blank' href='http://plnkr.co/edit/0AgWTigMDEVZEYcCSktq?p=preview'>Plunkr demo</a>
+<a target='_blank' href='http://plnkr.co/edit/ZrDixBVoKIk3KU1Z12Mk?p=preview'>Plunkr demo</a>
 </h3>
