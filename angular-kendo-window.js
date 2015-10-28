@@ -73,77 +73,9 @@ angular.module('kendo.window', [])
                         evt.stopPropagation();
                     }
                 };
-                var windowOptions = $modalStack.getTop().value;
-                var opts = {
-                    modal: true,
-                    title: windowOptions.title,
-                    deactivate: function () {
-                        if (scope.done) {
-                            scope.done();
-                        }
-                    },
-                    activate: function () {
-                        var inputsWithAutofocus = element[0].querySelectorAll('[autofocus]');
-                        /**
-                         * Auto-focusing of a freshly-opened modal element causes any child elements
-                         * with the autofocus attribute to lose focus. This is an issue on touch
-                         * based devices which will show and then hide the onscreen keyboard.
-                         * Attempts to refocus the autofocus element via JavaScript will not reopen
-                         * the onscreen keyboard. Fixed by updated the focusing logic to only autofocus
-                         * the modal element if the modal does not contain an autofocus element.
-                         */
-                        if (inputsWithAutofocus.length) {
-                            inputsWithAutofocus[0].focus();
-                        }
-                        else {
-                            element[0].focus();
-                        }
-                        windowOptions.openedDeferred.resolve(true);
-                    },
-                    visible: false,
-                    width: 500,
-                    actions: ["Close"]
-                };
-                if (windowOptions.width) {
-                    opts.width = windowOptions.width;
-                }
-                if (windowOptions.height) {
-                    opts.height = windowOptions.height;
-                }
-                if (windowOptions.draggable !== undefined) {
-                    opts.draggable = windowOptions.draggable;
-                }
-                if (windowOptions.resizable !== undefined) {
-                    opts.resizable = windowOptions.resizable;
-                }
-                if (windowOptions.modal !== undefined) {
-                    opts.modal = windowOptions.modal;
-                }
-                if (windowOptions.actions) {
-                    opts.actions = windowOptions.actions;
-                }
-                if (windowOptions.noMaxHeight === undefined || windowOptions.noMaxHeight === false) {
-                    if (windowOptions.maxHeight) {
-                        opts.maxHeight = windowOptions.maxHeight;
-                    }
-                    else {
-                        opts.maxHeight = 600;
-                        opts.resizable = false;
-                    }
-                }
-                if (windowOptions.center === null || windowOptions.center === false) {
-                    var x = $(window).width() / 2;
-                    var y = $(window).height() / 2;
-                    var h = 600;
-                    if (opts.height) {
-                        h = opts.height;
-                    }
-                    opts.position = {
-                        top: y - (h / 2),
-                        left: x - (opts.width / 2)
-                    };
-                }
-                scope.options = opts;
+                var windowInstance = $modalStack.getTop().value;
+                
+                scope.options = windowInstance.options;
                 // moved from template to fix issue #2280
                 element.on('click', scope.close);
                 // This property is only added to the scope for the purpose of detecting when this directive is rendered.
@@ -259,16 +191,7 @@ angular.module('kendo.window', [])
                 renderDeferred: modal.renderDeferred,
                 openedDeferred: modal.openedDeferred,
                 modalScope: modal.scope,
-                title: modal.title,
-                modal: modal.modal,
-                center: modal.center,
-                width: modal.width,
-                height: modal.height,
-                actions: modal.actions,
-                draggable: modal.draggable,
-                resizable: modal.resizable,
-                maxHeight: modal.maxHeight,
-                noMaxHeight: modal.noMaxHeight
+                options: modal.options
             });
             
             var body = $document.find('body').eq(0);
@@ -426,16 +349,7 @@ angular.module('kendo.window', [])
                             openedDeferred: modalOpenedDeferred,
                             renderDeferred: modalRenderDeferred,
                             content: tplAndVars[0],
-                            title: modalOptions.title,
-                            modal: modalOptions.modal,
-                            center: modalOptions.center,
-                            width: modalOptions.width,
-                            height: modalOptions.height,
-                            actions: modalOptions.actions,
-                            draggable: modalOptions.draggable,
-                            resizable: modalOptions.resizable,
-                            maxHeight: modalOptions.maxHeight,
-                            noMaxHeight: modalOptions.noMaxHeight
+                            options: modalOptions.options
                         });
                     }, function resolveError(reason) {
                         modalOpenedDeferred.reject(reason);
