@@ -139,6 +139,12 @@ angular.module('kendo.window', [])
                 if (windowOptions.height) {
                     opts.height = windowOptions.height;
                 }
+                if (windowOptions.draggable !== undefined) {
+                    opts.draggable = windowOptions.draggable;
+                }
+                if (windowOptions.resizable !== undefined) {
+                    opts.resizable = windowOptions.resizable;
+                }
                 if (windowOptions.modal !== undefined) {
                     opts.modal = windowOptions.modal;
                 }
@@ -359,12 +365,14 @@ angular.module('kendo.window', [])
                 width: modal.width,
                 height: modal.height,
                 actions: modal.actions,
+                draggable: modal.draggable,
+                resizable: modal.resizable,
                 maxHeight: modal.maxHeight,
                 noMaxHeight: modal.noMaxHeight
             });
             openedClasses.put(modalBodyClass, windowInstance);
             var body = $document.find('body').eq(0);
-            var angularDomEl = angular.element('<div uib-modal-window="modal-window"></div>');
+            var angularDomEl = angular.element('<div uib-modal-window="modal-window" template-url="app/common/directives/angular-kendo-window.html"></div>');
             angularDomEl.attr({
                 'template-url': modal.windowTemplateUrl,
                 'index': openedWindows.length() - 1,
@@ -566,6 +574,8 @@ angular.module('kendo.window', [])
                             width: modalOptions.width,
                             height: modalOptions.height,
                             actions: modalOptions.actions,
+                            draggable: modalOptions.draggable,
+                            resizable: modalOptions.resizable,
                             maxHeight: modalOptions.maxHeight,
                             noMaxHeight: modalOptions.noMaxHeight
                         });
