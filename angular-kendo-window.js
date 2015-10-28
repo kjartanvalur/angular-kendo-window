@@ -124,9 +124,26 @@ angular.module('kendo.window', [])
                     modal: true,
                     title: windowOptions.title,
                     deactivate: function () {
-                        scope.done();
+                        if (scope.done) {
+                            scope.done();
+                        }
                     },
                     activate: function () {
+                        var inputsWithAutofocus = element[0].querySelectorAll('[autofocus]');
+                        /**
+                         * Auto-focusing of a freshly-opened modal element causes any child elements
+                         * with the autofocus attribute to lose focus. This is an issue on touch
+                         * based devices which will show and then hide the onscreen keyboard.
+                         * Attempts to refocus the autofocus element via JavaScript will not reopen
+                         * the onscreen keyboard. Fixed by updated the focusing logic to only autofocus
+                         * the modal element if the modal does not contain an autofocus element.
+                         */
+                        if (inputsWithAutofocus.length) {
+                            inputsWithAutofocus[0].focus();
+                        }
+                        else {
+                            element[0].focus();
+                        }
                         windowOptions.openedDeferred.resolve(true);
                     },
                     visible: false,
@@ -189,32 +206,14 @@ angular.module('kendo.window', [])
                     }
                 });
                 modalRenderDeferObj.promise.then(function () {
-                    var animationPromise = null;
                     scope.myKendoWindow.open().center();
                     scope.$on($modalStack.NOW_CLOSING_EVENT, function (e, setIsAsync) {
                         scope.done = setIsAsync();
                         scope.myKendoWindow.close();
                     });
-                    $q.when(animationPromise).then(function () {
-                        var inputsWithAutofocus = element[0].querySelectorAll('[autofocus]');
-                        /**
-                         * Auto-focusing of a freshly-opened modal element causes any child elements
-                         * with the autofocus attribute to lose focus. This is an issue on touch
-                         * based devices which will show and then hide the onscreen keyboard.
-                         * Attempts to refocus the autofocus element via JavaScript will not reopen
-                         * the onscreen keyboard. Fixed by updated the focusing logic to only autofocus
-                         * the modal element if the modal does not contain an autofocus element.
-                         */
-                        if (inputsWithAutofocus.length) {
-                            inputsWithAutofocus[0].focus();
-                        }
-                        else {
-                            element[0].focus();
-                        }
-                    });
-                    // Notify {@link $modalStack} that modal is rendered.
                     var modal = $modalStack.getTop();
                     if (modal) {
+                        // Notify {@link $modalStack} that modal is rendered.
                         $modalStack.modalRendered(modal.key);
                     }
                 });
@@ -315,42 +314,6 @@ angular.module('kendo.window', [])
                 }
             }
         }
-        $document.bind('keydown', function (evt) {
-            if (evt.isDefaultPrevented()) {
-                return evt;
-            }
-            var modal = openedWindows.top();
-            if (modal && modal.value.keyboard) {
-                switch (evt.which) {
-                    case 27: {
-                        evt.preventDefault();
-                        $rootScope.$apply(function () {
-                            $modalStack.dismiss(modal.key, 'escape key press');
-                        });
-                        break;
-                    }
-                    case 9: {
-                        $modalStack.loadFocusElementList(modal);
-                        var focusChanged = false;
-                        if (evt.shiftKey) {
-                            if ($modalStack.isFocusInFirstItem(evt)) {
-                                focusChanged = $modalStack.focusLastFocusableElement();
-                            }
-                        }
-                        else {
-                            if ($modalStack.isFocusInLastItem(evt)) {
-                                focusChanged = $modalStack.focusFirstFocusableElement();
-                            }
-                        }
-                        if (focusChanged) {
-                            evt.preventDefault();
-                            evt.stopPropagation();
-                        }
-                        break;
-                    }
-                }
-            }
-        });
         $modalStack.open = function (windowInstance, modal) {
             var modalOpener = $document[0].activeElement, modalBodyClass = modal.openedClass || OPENED_MODAL_CLASS;
             toggleTopWindowClass(false);
