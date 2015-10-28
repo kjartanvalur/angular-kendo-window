@@ -47,51 +47,7 @@ angular.module('kendo.window', [])
         }
     };
 })
-    .factory('$$multiMap', function () {
-    return {
-        createNew: function () {
-            var map = {};
-            return {
-                entries: function () {
-                    return Object.keys(map).map(function (key) {
-                        return {
-                            key: key,
-                            value: map[key]
-                        };
-                    });
-                },
-                get: function (key) {
-                    return map[key];
-                },
-                hasKey: function (key) {
-                    return !!map[key];
-                },
-                keys: function () {
-                    return Object.keys(map);
-                },
-                put: function (key, value) {
-                    if (!map[key]) {
-                        map[key] = [];
-                    }
-                    map[key].push(value);
-                },
-                remove: function (key, value) {
-                    var values = map[key];
-                    if (!values) {
-                        return;
-                    }
-                    var idx = values.indexOf(value);
-                    if (idx !== -1) {
-                        values.splice(idx, 1);
-                    }
-                    if (!values.length) {
-                        delete map[key];
-                    }
-                }
-            };
-        }
-    };
-})
+   
     .directive('uibModalWindow', [
     '$uibModalStack', '$q', '$animate', '$injector',
     function ($modalStack, $q, $animate, $injector) {
@@ -109,8 +65,6 @@ angular.module('kendo.window', [])
                 return tAttrs.templateUrl || 'window.html';
             },
             link: function (scope, element, attrs) {
-                element.addClass(attrs.windowClass || '');
-                element.addClass(attrs.windowTopClass || '');
                 scope.size = attrs.size;
                 scope.close = function (evt) {
                     var modal = $modalStack.getTop();
@@ -234,35 +188,25 @@ angular.module('kendo.window', [])
     '$animate', '$timeout', '$document', '$compile', '$rootScope',
     '$q',
     '$injector',
-    '$$multiMap',
     '$$stackedMap',
-    function ($animate, $timeout, $document, $compile, $rootScope, $q, $injector, $$multiMap, $$stackedMap) {
+    function ($animate, $timeout, $document, $compile, $rootScope, $q, $injector, $$stackedMap) {
         var $animateCss = null;
         if ($injector.has('$animateCss')) {
             $animateCss = $injector.get('$animateCss');
         }
-        var OPENED_MODAL_CLASS = 'modal-open';
         var openedWindows = $$stackedMap.createNew();
-        var openedClasses = $$multiMap.createNew();
+        
         var $modalStack = {
             NOW_CLOSING_EVENT: 'modal.stack.now-closing'
         };
-        //Modal focus behavior
-        var focusableElementList;
-        var focusIndex = 0;
-        var tababbleSelector = 'a[href], area[href], input:not([disabled]), ' +
-            'button:not([disabled]),select:not([disabled]), textarea:not([disabled]), ' +
-            'iframe, object, embed, *[tabindex], *[contenteditable=true]';
+        
         function removeModalWindow(windowInstance, elementToReceiveFocus) {
             var body = $document.find('body').eq(0);
             var modalWindow = openedWindows.get(windowInstance).value;
             //clean up the stack
             openedWindows.remove(windowInstance);
             removeAfterAnimate(modalWindow.modalDomEl, modalWindow.modalScope, function () {
-                var modalBodyClass = modalWindow.openedClass || OPENED_MODAL_CLASS;
-                openedClasses.remove(modalBodyClass, windowInstance);
-                body.toggleClass(modalBodyClass, openedClasses.hasKey(modalBodyClass));
-                toggleTopWindowClass(true);
+                
             });
             //move focus to specified element if available, or else to body
             if (elementToReceiveFocus && elementToReceiveFocus.focus) {
@@ -272,14 +216,7 @@ angular.module('kendo.window', [])
                 body.focus();
             }
         }
-        // Add or remove "windowTopClass" from the top window in the stack
-        function toggleTopWindowClass(toggleSwitch) {
-            var modalWindow;
-            if (openedWindows.length() > 0) {
-                modalWindow = openedWindows.top().value;
-                modalWindow.modalDomEl.toggleClass(modalWindow.windowTopClass || '', toggleSwitch);
-            }
-        }
+        
         function removeAfterAnimate(domEl, scope, done) {
             var asyncDeferred;
             var asyncPromise = null;
@@ -315,8 +252,8 @@ angular.module('kendo.window', [])
             }
         }
         $modalStack.open = function (windowInstance, modal) {
-            var modalOpener = $document[0].activeElement, modalBodyClass = modal.openedClass || OPENED_MODAL_CLASS;
-            toggleTopWindowClass(false);
+            var modalOpener = $document[0].activeElement;
+            
             openedWindows.add(windowInstance, {
                 deferred: modal.deferred,
                 renderDeferred: modal.renderDeferred,
@@ -333,7 +270,7 @@ angular.module('kendo.window', [])
                 maxHeight: modal.maxHeight,
                 noMaxHeight: modal.noMaxHeight
             });
-            openedClasses.put(modalBodyClass, windowInstance);
+            
             var body = $document.find('body').eq(0);
             var angularDomEl = angular.element('<div uib-modal-window="modal-window"></div>');
             angularDomEl.attr({
@@ -348,8 +285,6 @@ angular.module('kendo.window', [])
             openedWindows.top().value.modalDomEl = modalDomEl;
             openedWindows.top().value.modalOpener = modalOpener;
             body.append(modalDomEl);
-            body.addClass(modalBodyClass);
-            $modalStack.clearFocusListCache();
         };
         function broadcastClosing(modalWindow, resultOrReason, closing) {
             return !modalWindow.value.modalScope.$broadcast('modal.closing', resultOrReason, closing).defaultPrevented;
@@ -387,46 +322,6 @@ angular.module('kendo.window', [])
             var modalWindow = openedWindows.get(windowInstance);
             if (modalWindow) {
                 modalWindow.value.renderDeferred.resolve();
-            }
-        };
-        $modalStack.focusFirstFocusableElement = function () {
-            if (focusableElementList.length > 0) {
-                focusableElementList[0].focus();
-                return true;
-            }
-            return false;
-        };
-        $modalStack.focusLastFocusableElement = function () {
-            if (focusableElementList.length > 0) {
-                focusableElementList[focusableElementList.length - 1].focus();
-                return true;
-            }
-            return false;
-        };
-        $modalStack.isFocusInFirstItem = function (evt) {
-            if (focusableElementList.length > 0) {
-                return (evt.target || evt.srcElement) == focusableElementList[0];
-            }
-            return false;
-        };
-        $modalStack.isFocusInLastItem = function (evt) {
-            if (focusableElementList.length > 0) {
-                return (evt.target || evt.srcElement) == focusableElementList[focusableElementList.length - 1];
-            }
-            return false;
-        };
-        $modalStack.clearFocusListCache = function () {
-            focusableElementList = [];
-            focusIndex = 0;
-        };
-        $modalStack.loadFocusElementList = function (modalWindow) {
-            if (focusableElementList === undefined || !focusableElementList.length) {
-                if (modalWindow) {
-                    var modalDomE1 = modalWindow.value.modalDomEl;
-                    if (modalDomE1 && modalDomE1.length) {
-                        focusableElementList = modalDomE1[0].querySelectorAll(tababbleSelector);
-                    }
-                }
             }
         };
         return $modalStack;
