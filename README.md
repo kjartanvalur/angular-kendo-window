@@ -12,9 +12,11 @@ own template and controller.
 <pre>
  
    var windowInstance = $kWindow.open({
-                        modal: true,
-                        title: "Window title",
-                        width: 400,
+                        options:{
+                         modal: true,
+                         title: "Window title",
+                         width: 400,
+                       },
                         templateUrl: 'modal1.html',
                         controller: 'modalController',
                         resolve: {
@@ -31,5 +33,5 @@ own template and controller.
 <h1>Demo</h1>
 
 <h3>
-<a target='_blank' href='http://plnkr.co/edit/FgkOM9uQfpb0puXI7CCf?p=preview'>Plunkr demo</a>
+<a target='_blank' href='http://plnkr.co/edit/MpvTCDikmPhL6cE3D09W?p=preview'>Plunkr demo</a>
 </h3>
