@@ -372,7 +372,7 @@ angular.module('kendo.window', [])
             });
             openedClasses.put(modalBodyClass, windowInstance);
             var body = $document.find('body').eq(0);
-            var angularDomEl = angular.element('<div uib-modal-window="modal-window" template-url="app/common/directives/angular-kendo-window.html"></div>');
+            var angularDomEl = angular.element('<div uib-modal-window="modal-window"></div>');
             angularDomEl.attr({
                 'template-url': modal.windowTemplateUrl,
                 'index': openedWindows.length() - 1,
