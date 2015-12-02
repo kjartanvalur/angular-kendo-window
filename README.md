@@ -12,10 +12,12 @@ own template and controller.
 <pre>
  
    var windowInstance = $kWindow.open({
-                        options:{
+                       options:{
                          modal: true,
-                         title: "Window title",
+                         title: $scope.title,
+                         height: 150,
                          width: 400,
+                         visible: false
                        },
                         templateUrl: 'modal1.html',
                         controller: 'modalController',
