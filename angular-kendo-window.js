@@ -92,7 +92,10 @@ angular.module('kendo.window', [])
                     }
                 });
                 modalRenderDeferObj.promise.then(function () {
-                    scope.myKendoWindow.open().center();
+                    var kWindow = scope.myKendoWindow.open();
+                    if(scope.options.position === undefined){
+                      kWindow.center();
+                    }
                     scope.$on($modalStack.NOW_CLOSING_EVENT, function (e, setIsAsync) {
                         scope.done = setIsAsync();
                         scope.myKendoWindow.close();
@@ -349,7 +352,7 @@ angular.module('kendo.window', [])
                             openedDeferred: modalOpenedDeferred,
                             renderDeferred: modalRenderDeferred,
                             content: tplAndVars[0],
-                            options: modalOptions.options
+                            options: modalOptions.options === undefined ? {} : modalOptions.options
                         });
                     }, function resolveError(reason) {
                         modalOpenedDeferred.reject(reason);
