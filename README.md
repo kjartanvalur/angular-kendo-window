@@ -3,8 +3,7 @@ angular-kendo-window
 
 Angular Kendo Window
 
-Here is a angular directive that helps create <a target='_blank' href='http://kendoui.com'>KendoUI</a> windows with its
-own template and controller.
+Angular directive to dynamically create <a target='_blank' href='http://kendoui.com'>Kendo UI</a> windows with a separate template and controller.
 
 <b>This is highly influenced by <a target='_blank' href='http://angular-ui.github.io/bootstrap/#/modal'>UI Bootstrap modal directive</a>.</b>
 
