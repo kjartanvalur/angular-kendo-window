@@ -1,4 +1,4 @@
-angular-kendo-window
+<h1>angular-kendo-window</h1>
 ====================
 
 Angular Kendo Window
@@ -6,6 +6,10 @@ Angular Kendo Window
 Angular directive to dynamically create <a target='_blank' href='http://kendoui.com'>Kendo UI</a> windows with a separate template and controller.
 
 <b>This is highly influenced by <a target='_blank' href='http://angular-ui.github.io/bootstrap/#/modal'>UI Bootstrap modal directive</a>.</b>
+<h1>Documentation</h1>
+<h4><a target='_blank' href='http://docs.telerik.com/kendo-ui/AngularJS/how-to/window-service'>Telerik documentation for angular-kendo-window</a></h4>
+<h4><a target='_blank' href='http://docs.telerik.com/kendo-ui/api/javascript/ui/window'>Telerik documentation for kendo.ui.window</a></h4>
+
 
 <h1>Example</h1>
 <pre>
