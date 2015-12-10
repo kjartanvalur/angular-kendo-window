@@ -36,3 +36,7 @@ Angular directive to dynamically create <a target='_blank' href='http://kendoui.
 <h3>
 <a target='_blank' href='http://plnkr.co/edit/6lyrblMhZ5ofuonmGoPZ?p=preview'>Plunkr demo</a>
 </h3>
+
+<h1>Installation</h1>
+<h3>Bower</h3>
+<pre>bower install angular-kendo-window</pre>
