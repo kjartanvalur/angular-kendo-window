@@ -1,5 +1,4 @@
 <h1>angular-kendo-window</h1>
-====================
 
 Angular Kendo Window
 
@@ -17,7 +16,7 @@ Angular directive to dynamically create <a target='_blank' href='http://kendoui.
    var windowInstance = $kWindow.open({
                        options:{
                          modal: true,
-                         title: $scope.title,
+                         title: "Window title",
                          height: 150,
                          width: 400,
                          visible: false
