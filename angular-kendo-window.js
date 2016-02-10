@@ -164,27 +164,13 @@ angular.module('kendo.window', [])
                     asyncDeferred.resolve();
                 };
             };
-            scope.$broadcast($modalStack.NOW_CLOSING_EVENT, setIsAsync);
-            // Note that it's intentional that asyncPromise might be null.
-            // That's when setIsAsync has not been called during the
             // NOW_CLOSING_EVENT broadcast.
-            return $q.when(asyncPromise).then(afterAnimating);
-            function afterAnimating() {
-                if ($animateCss) {
-                    $animateCss(domEl, {
-                        event: 'leave'
-                    }).start().then(function () {
-                        domEl.remove();
-                    });
-                }
-                else {
-                    $animate.leave(domEl);
-                }
-                scope.$destroy();
-                if (done) {
-                    done();
-                }
-            }
+            scope.$broadcast($modalStack.NOW_CLOSING_EVENT, setIsAsync);            
+            
+             setTimeout(function(){
+                    domEl.parent().remove();
+                    scope.$destroy();
+                }, 1000);
         }
         $modalStack.open = function (windowInstance, modal) {
             var modalOpener = $document[0].activeElement;
