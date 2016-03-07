@@ -75,6 +75,19 @@ angular.module('kendo.window', [])
                 };
                 var windowInstance = $modalStack.getTop().value;
                 
+                if(windowInstance.options.close !== undefined){
+                    var closeFunction = windowInstance.options.close;
+                    windowInstance.options.close = function(e){
+                        closeFunction();
+                        scope.myKendoWindow.destroy();
+                    }    
+                }
+                else{
+                    windowInstance.options.close = function(e){
+                        closeFunction();
+                        scope.myKendoWindow.destroy();
+                    }
+                }
                 scope.options = windowInstance.options;
                 // moved from template to fix issue #2280
                 element.on('click', scope.close);
