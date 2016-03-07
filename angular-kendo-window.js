@@ -79,12 +79,16 @@ angular.module('kendo.window', [])
                     var closeFunction = windowInstance.options.close;
                     windowInstance.options.close = function(e){
                         closeFunction();
-                        scope.myKendoWindow.destroy();
+                        setTimeout(function(){
+            				scope.myKendoWindow.destroy();
+            			}, 1000);
                     }    
                 }
                 else{
                     windowInstance.options.close = function(e){
-                        scope.myKendoWindow.destroy();
+                        setTimeout(function(){
+            				scope.myKendoWindow.destroy();
+            			}, 1000);
                     }
                 }
                 scope.options = windowInstance.options;
