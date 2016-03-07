@@ -84,7 +84,6 @@ angular.module('kendo.window', [])
                 }
                 else{
                     windowInstance.options.close = function(e){
-                        closeFunction();
                         scope.myKendoWindow.destroy();
                     }
                 }
