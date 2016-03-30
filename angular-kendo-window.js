@@ -108,10 +108,11 @@ angular.module('kendo.window', [])
                     }
                 });
                 modalRenderDeferObj.promise.then(function () {
-                    var kWindow = scope.myKendoWindow.open();
                     if(scope.options.position === undefined){
-                      kWindow.center();
+                      scope.myKendoWindow.center();
                     }
+                    scope.myKendoWindow.open();
+                    
                     scope.$on($modalStack.NOW_CLOSING_EVENT, function (e, setIsAsync) {
                         scope.done = setIsAsync();
                         scope.myKendoWindow.close();
