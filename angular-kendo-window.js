@@ -62,7 +62,8 @@ angular.module('kendo.window', [])
             replace: true,
             transclude: true,
             templateUrl: function (tElement, tAttrs) {
-                return tAttrs.templateUrl || 'window.html';
+                var windowInstance = $modalStack.getTop().value;
+                return windowInstance.windowTemplateUrl || 'window.html';
             },
             link: function (scope, element, attrs) {
                 scope.size = attrs.size;
@@ -197,7 +198,8 @@ angular.module('kendo.window', [])
                 renderDeferred: modal.renderDeferred,
                 openedDeferred: modal.openedDeferred,
                 modalScope: modal.scope,
-                options: modal.options
+                options: modal.options,
+                windowTemplateUrl: modal.windowTemplateUrl
             });
             
             var body = $document.find('body').eq(0);
@@ -355,7 +357,8 @@ angular.module('kendo.window', [])
                             openedDeferred: modalOpenedDeferred,
                             renderDeferred: modalRenderDeferred,
                             content: tplAndVars[0],
-                            options: modalOptions.options === undefined ? {} : modalOptions.options
+                            options: modalOptions.options === undefined ? {} : modalOptions.options,
+                            windowTemplateUrl: modalOptions.windowTemplateUrl
                         });
                     }, function resolveError(reason) {
                         modalOpenedDeferred.reject(reason);
