@@ -39,7 +39,7 @@ Angular directive to dynamically create <a target='_blank' href='http://kendoui.
 <h1>Demo</h1>
 
 <h3>
-<a target='_blank' href='http://plnkr.co/edit/DFvDwqYeFcZJlFTriPwj?p=preview'>Plunkr demo</a>
+<a target='_blank' href='http://plnkr.co/edit/NILoTF5yVdneHRqQbzdm?p=preview'>Plunkr demo</a>
 </h3>
 
 <h1>Installation</h1>
