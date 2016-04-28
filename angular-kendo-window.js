@@ -48,8 +48,8 @@ angular.module('kendo.window', [])
     };
 })
    
-    .directive('uibModalWindow', [
-    '$uibModalStack', '$q', '$animate', '$injector',
+    .directive('kWindowFrame', [
+    '$kModalStack', '$q', '$animate', '$injector',
     function ($modalStack, $q, $animate, $injector) {
         var $animateCss = null;
         if ($injector.has('$animateCss')) {
@@ -127,7 +127,7 @@ angular.module('kendo.window', [])
             }
         };
     }])
-    .directive('uibModalTransclude', function () {
+    .directive('kWindowTransclude', function () {
     return {
         link: function ($scope, $element, $attrs, controller, $transclude) {
             $transclude($scope.$parent, function (clone) {
@@ -137,7 +137,7 @@ angular.module('kendo.window', [])
         }
     };
 })
-    .factory('$uibModalStack', [
+    .factory('$kModalStack', [
     '$animate', '$timeout', '$document', '$compile', '$rootScope',
     '$q',
     '$injector',
@@ -203,7 +203,7 @@ angular.module('kendo.window', [])
             });
             
             var body = $document.find('body').eq(0);
-            var angularDomEl = angular.element('<div uib-modal-window="modal-window"></div>');
+            var angularDomEl = angular.element('<div k-window-frame="modal-window"></div>');
             angularDomEl.attr({
                 'template-url': modal.windowTemplateUrl,
                 'index': openedWindows.length() - 1,
@@ -223,7 +223,7 @@ angular.module('kendo.window', [])
         $modalStack.close = function (windowInstance, result) {
             var modalWindow = openedWindows.get(windowInstance);
             if (modalWindow && broadcastClosing(modalWindow, result, true)) {
-                modalWindow.value.modalScope.$$uibDestructionScheduled = true;
+                modalWindow.value.modalScope.$$kDestructionScheduled = true;
                 modalWindow.value.deferred.resolve(result);
                 removeModalWindow(windowInstance, modalWindow.value.modalOpener);
                 return true;
@@ -233,7 +233,7 @@ angular.module('kendo.window', [])
         $modalStack.dismiss = function (windowInstance, reason) {
             var modalWindow = openedWindows.get(windowInstance);
             if (modalWindow && broadcastClosing(modalWindow, reason, false)) {
-                modalWindow.value.modalScope.$$uibDestructionScheduled = true;
+                modalWindow.value.modalScope.$$kDestructionScheduled = true;
                 modalWindow.value.deferred.reject(reason);
                 removeModalWindow(windowInstance, modalWindow.value.modalOpener);
                 return true;
@@ -263,7 +263,7 @@ angular.module('kendo.window', [])
             animation: false,
             keyboard: true
         },
-        $get: ['$injector', '$rootScope', '$q', '$templateRequest', '$controller', '$uibModalStack',
+        $get: ['$injector', '$rootScope', '$q', '$templateRequest', '$controller', '$kModalStack',
             function ($injector, $rootScope, $q, $templateRequest, $controller, $modalStack) {
                 var $modal = {};
                 function getTemplatePromise(options) {
@@ -330,8 +330,8 @@ angular.module('kendo.window', [])
                         modalScope.$close = windowInstance.close;
                         modalScope.$dismiss = windowInstance.dismiss;
                         modalScope.$on('$destroy', function () {
-                            if (!modalScope.$$uibDestructionScheduled) {
-                                modalScope.$dismiss('$uibUnscheduledDestruction');
+                            if (!modalScope.$$kDestructionScheduled) {
+                                modalScope.$dismiss('$kUnscheduledDestruction');
                             }
                         });
                         var ctrlInstance, ctrlLocals = {};
