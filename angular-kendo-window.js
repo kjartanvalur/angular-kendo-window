@@ -80,6 +80,7 @@ angular.module('kendo.window', [])
                     var closeFunction = windowInstance.options.close;
                     windowInstance.options.close = function(e){
                         closeFunction();
+                        windowInstance.deferred.reject();
                         setTimeout(function(){
             				scope.myKendoWindow.destroy();
             			}, 1000);
@@ -87,6 +88,7 @@ angular.module('kendo.window', [])
                 }
                 else{
                     windowInstance.options.close = function(e){
+                        windowInstance.deferred.reject();
                         setTimeout(function(){
             				scope.myKendoWindow.destroy();
             			}, 1000);
