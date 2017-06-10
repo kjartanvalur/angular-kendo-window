@@ -75,24 +75,34 @@ angular.module('kendo.window', [])
                     }
                 };
                 var windowInstance = $modalStack.getTop().value;
-                
-                if(windowInstance.options.close !== undefined){
-                    var closeFunction = windowInstance.options.close;
-                    windowInstance.options.close = function(e){
-                        closeFunction();
-                        windowInstance.deferred.reject();
-                        setTimeout(function(){
-            				scope.myKendoWindow.destroy();
-            			}, 1000);
-                    }    
-                }
-                else{
-                    windowInstance.options.close = function(e){
-                        windowInstance.deferred.reject();
-                        setTimeout(function(){
-            				scope.myKendoWindow.destroy();
-            			}, 1000);
+
+                element[0].addEventListener('close', function (e) {
+                    if (e.defaultPrevented === false) {
+                        setTimeout(function () {
+                            scope.myKendoWindow.destroy();
+                        }, 1000);
+
+                        if (typeof windowInstance._close === 'function') {
+                            windowInstance._close();
+                        }
                     }
+                });
+
+                if (typeof windowInstance.options.close === 'function') {
+                    var closeFunction = windowInstance.options.close;
+                    element.children()[0].addEventListener('close', closeFunction);
+                }
+
+                windowInstance.options.close = function (e) {
+                    //var closeEvent = new CustomEvent('close', { bubbles: true, cancelable: true });
+                    var closeEvent = document.createEvent('CustomEvent');
+                    closeEvent.initCustomEvent('close', true, true, {});
+                    var closeEventPreventDefault = closeEvent.preventDefault;
+                    closeEvent.preventDefault = function () {
+                        closeEventPreventDefault.call(closeEvent);
+                        e.preventDefault();
+                    };
+                    element.children()[0].dispatchEvent(closeEvent);
                 }
                 scope.options = windowInstance.options;
                 // moved from template to fix issue #2280
@@ -118,7 +128,7 @@ angular.module('kendo.window', [])
                     
                     scope.$on($modalStack.NOW_CLOSING_EVENT, function (e, setIsAsync) {
                         scope.done = setIsAsync();
-                        scope.myKendoWindow.close();
+                        scope.myKendoWindow._close();
                     });
                     var modal = $modalStack.getTop();
                     if (modal) {
@@ -173,20 +183,6 @@ angular.module('kendo.window', [])
         }
         
         function removeAfterAnimate(domEl, scope, done) {
-            var asyncDeferred;
-            var asyncPromise = null;
-            var setIsAsync = function () {
-                if (!asyncDeferred) {
-                    asyncDeferred = $q.defer();
-                    asyncPromise = asyncDeferred.promise;
-                }
-                return function asyncDone() {
-                    asyncDeferred.resolve();
-                };
-            };
-            // NOW_CLOSING_EVENT broadcast.
-            scope.$broadcast($modalStack.NOW_CLOSING_EVENT, setIsAsync);            
-            
              setTimeout(function(){
                     domEl.parent().remove();
                     scope.$destroy();
@@ -223,14 +219,28 @@ angular.module('kendo.window', [])
             return !modalWindow.value.modalScope.$broadcast('modal.closing', resultOrReason, closing).defaultPrevented;
         }
         $modalStack.close = function (windowInstance, result) {
+            var asyncDeferred;
+            var asyncPromise = null;
+            var setIsAsync = function () {
+                if (!asyncDeferred) {
+                    asyncDeferred = $q.defer();
+                    asyncPromise = asyncDeferred.promise;
+                }
+                return function asyncDone() {
+                    asyncDeferred.resolve();
+                };
+            };
             var modalWindow = openedWindows.get(windowInstance);
-            if (modalWindow && broadcastClosing(modalWindow, result, true)) {
-                modalWindow.value.modalScope.$$kDestructionScheduled = true;
-                modalWindow.value.deferred.resolve(result);
-                removeModalWindow(windowInstance, modalWindow.value.modalOpener);
-                return true;
-            }
-            return !modalWindow;
+            modalWindow.value._close = function () {
+                return function () {
+                    if (modalWindow && broadcastClosing(modalWindow, result, true)) {
+                        modalWindow.value.modalScope.$$kDestructionScheduled = true;
+                        modalWindow.value.deferred.resolve(result);
+                        removeModalWindow(windowInstance, modalWindow.value.modalOpener);
+                    }
+                }
+            }();
+            modalWindow.value.modalScope.$broadcast($modalStack.NOW_CLOSING_EVENT, setIsAsync);
         };
         $modalStack.dismiss = function (windowInstance, reason) {
             var modalWindow = openedWindows.get(windowInstance);
