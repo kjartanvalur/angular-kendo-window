@@ -82,6 +82,8 @@ angular.module('kendo.window', [])
                         closeFunction();
                         windowInstance.deferred.reject();
                         setTimeout(function(){
+                            //Add close call to allow controller to $destroy correctly
+                            windowInstance.modalScope.$close();
             				scope.myKendoWindow.destroy();
             			}, 1000);
                     }    
@@ -90,6 +92,8 @@ angular.module('kendo.window', [])
                     windowInstance.options.close = function(e){
                         windowInstance.deferred.reject();
                         setTimeout(function(){
+                            //Add close call to allow controller to $destroy correctly
+                            windowInstance.modalScope.$close();
             				scope.myKendoWindow.destroy();
             			}, 1000);
                     }
