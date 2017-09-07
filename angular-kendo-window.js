@@ -80,6 +80,7 @@ angular.module('kendo.window', [])
                     if (e.defaultPrevented === false) {
                         setTimeout(function () {
                             scope.myKendoWindow.destroy();
+							scope.$parent.$broadcast('$destroy');
                         }, 1000);
 
                         if (typeof windowInstance._close === 'function') {
