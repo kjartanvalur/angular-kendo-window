@@ -306,6 +306,7 @@ angular.module('kendo.window', [])
                         result: modalResultDeferred.promise,
                         opened: modalOpenedDeferred.promise,
                         rendered: modalRenderDeferred.promise,
+						options: modalOptions.options,
                         close: function (result) {
                             return $modalStack.close(windowInstance, result);
                         },
