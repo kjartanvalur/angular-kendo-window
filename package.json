@@ -1,6 +1,6 @@
 {
   "name": "angular-kendo-window",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "description": "Angular directive to dynamically create Kendo UI windows with a separate template and controller.",
   "main": "angular-kendo-window.js",
   "scripts": {
