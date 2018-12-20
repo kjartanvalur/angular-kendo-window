@@ -115,10 +115,13 @@ angular.module('kendo.window', [])
                     }
                 });
                 modalRenderDeferObj.promise.then(function () {
+                  setTimeout(function(){
                     if(scope.options.position === undefined){
                       scope.myKendoWindow.center();
                     }
                     scope.myKendoWindow.open();
+                    
+                  },10);
                     
                     scope.$on($modalStack.NOW_CLOSING_EVENT, function (e, setIsAsync) {
                         scope.done = setIsAsync();
@@ -209,7 +212,7 @@ angular.module('kendo.window', [])
             });
             
             var body = $document.find('body').eq(0);
-            var angularDomEl = angular.element('<div k-window-frame="modal-window"></div>');
+            var angularDomEl = angular.element('<div k-window-frame="modal-window" style="display:none;"></div>');
             angularDomEl.attr({
                 'template-url': modal.windowTemplateUrl,
                 'index': openedWindows.length() - 1,
