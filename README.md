@@ -7,7 +7,6 @@ Angular directive to dynamically create <a target='_blank' href='http://kendoui.
 <b>This is highly influenced by <a target='_blank' href='http://angular-ui.github.io/bootstrap/#/modal'>UI Bootstrap modal directive</a>.</b>
 
 <h1>Documentation</h1>
-<h4><a targwet='_blank' href='http://docs.telerik.com/kendo-ui/AngularJS/how-to/window-service'>Telerik documentation for angular-kendo-window</a></h4>
 <h4><a target='_blank' href='http://docs.telerik.com/kendo-ui/api/javascript/ui/window'>Telerik documentation for kendo.ui.window</a></h4>
 
 
