@@ -47,33 +47,68 @@ angular.module('kendo.window', [])
             }
         };
     })
-
     .directive('kWindowFrame', [
         '$kModalStack', '$q', '$injector', '$timeout',
         function ($modalStack, $q, $injector, $timeout) {
-
             return {
                 scope: {
                     index: '@'
                 },
                 replace: true,
                 transclude: true,
-                template: '<div kendo-window="myKendoWindow" k-options="options" modal-render="{{$isRendered}}" tabindex="-1" role="dialog"><div><div k-window-transclude></div></div></div>',
+                template: '<div id="myKendoWindow' + $modalStack.length + '" kendo-window="myKendoWindow" k-options="options" modal-render="{{$isRendered}}" tabindex="-1" role="dialog"><div><div k-window-transclude></div></div></div>',
                 link: function (scope, element, attrs) {
-
                     var windowInstance = $modalStack.getTop().value;
+                    var deactivateFunction = windowInstance.options.deactivate;
+                    var activateFunction = windowInstance.options.activate;
+                    var resizeFunction = windowInstance.options.resize;
+                    var maximizeFunction = windowInstance.options.maximize;
+                    var minimizeFunction = windowInstance.options.minimize;
                     var closeFunction = windowInstance.options.close;
+                    windowInstance.options.deactivate = function () {
+                        if (deactivateFunction)
+                            deactivateFunction();
+                        windowInstance.modalScope.$close();
+                        scope.myKendoWindow.destroy();
+                    };
+                    windowInstance.options.activate = function () {
+                        if (activateFunction)
+                            activateFunction();
+                        windowInstance.openedDeferred.resolve();
+                        windowInstance.modalScope.$windowOpened = true;
+                        var modal = $modalStack.getTop();
+                        if (modal) {
+                            // Notify {@link $modalStack} that modal is rendered.
+                            $modalStack.modalRendered(modal.key);
+                        }
+                        //Set focus on the current window.
+                        //This is so the esc key will close the top window.
+                        $(windowInstance.myKendoWindow.element).focus();
+                    };
+                    windowInstance.options.resize = function (e) {
+                        if (resizeFunction)
+                            resizeFunction(e);
+                        if (windowInstance.onResize != null)
+                            windowInstance.onResize(e);
+                    };
                     windowInstance.options.close = function (e) {
-                        if (closeFunction !== undefined && closeFunction !== null) 
-                            closeFunction();
-                        windowInstance.deferred.reject();
-                        $timeout(function () {
-                            //Add close call to allow controller to $destroy correctly
-                            windowInstance.modalScope.$close();
-                            scope.myKendoWindow.destroy();
-                        }, 1000);
-                    }
-
+                        if (closeFunction !== undefined && closeFunction !== null)
+                            closeFunction(e);
+                        if (windowInstance.onClose != null)
+                            windowInstance.onClose(e);
+                    };
+                    windowInstance.options.minimize = function (e) {
+                        if (minimizeFunction !== undefined && minimizeFunction !== null)
+                            minimizeFunction(e);
+                        if (windowInstance.onMinimize != null)
+                            windowInstance.onMinimize(e);
+                    };
+                    windowInstance.options.maximize = function (e) {
+                        if (maximizeFunction !== undefined && maximizeFunction !== null)
+                            maximizeFunction(e);
+                        if (windowInstance.onMaximize != null)
+                            windowInstance.onMaximize(e);
+                    };
                     scope.options = windowInstance.options;
                     element.on('click', scope.close);
                     // This property is only added to the scope for the purpose of detecting when this directive is rendered.
@@ -91,29 +126,25 @@ angular.module('kendo.window', [])
                     });
                     modalRenderDeferObj.promise.then(function () {
                         $timeout(function () {
-                            if (scope.options.position === undefined) {
-                                scope.myKendoWindow.center();
-                            }
-                            scope.myKendoWindow.open();
-
-                        }, 10);
-
+                            scope.$apply();
+                            $timeout(function () {
+                                if (scope.options.position === undefined) {
+                                    scope.myKendoWindow.center().open();
+                                }
+                                else {
+                                    scope.myKendoWindow.open();
+                                }
+                                windowInstance.myKendoWindow = scope.myKendoWindow;
+                            }, 100);
+                        }, 100);
                         scope.$on($modalStack.NOW_CLOSING_EVENT, function (e, windowScope) {
-                            scope.myKendoWindow.bind("close", function (e) {
-                                windowScope.$destroy();
-                            });
                             scope.myKendoWindow.close();
-
                         });
-                        var modal = $modalStack.getTop();
-                        if (modal) {
-                            // Notify {@link $modalStack} that modal is rendered.
-                            $modalStack.modalRendered(modal.key);
-                        }
                     });
                 }
             };
-        }])
+        }
+    ])
     .directive('kWindowTransclude', function () {
         return {
             link: function ($scope, $element, $attrs, controller, $transclude) {
@@ -131,7 +162,6 @@ angular.module('kendo.window', [])
         '$$stackedMap',
         function ($document, $compile, $rootScope, $q, $injector, $$stackedMap) {
             var openedWindows = $$stackedMap.createNew();
-
             var $modalStack = {
                 NOW_CLOSING_EVENT: 'modal.stack.now-closing',
                 open: null,
@@ -141,15 +171,12 @@ angular.module('kendo.window', [])
                 getTop: null,
                 modalRendered: null
             };
-
             function removeModalWindow(windowInstance, elementToReceiveFocus) {
                 var body = $document.find('body').eq(0);
                 var modalWindow = openedWindows.get(windowInstance).value;
-
                 //clean up the stack
                 openedWindows.remove(windowInstance);
                 modalWindow.modalScope.$broadcast($modalStack.NOW_CLOSING_EVENT, modalWindow.modalScope);
-
                 //move focus to specified element if available, or else to body
                 if (elementToReceiveFocus && elementToReceiveFocus.focus) {
                     elementToReceiveFocus.focus();
@@ -158,18 +185,19 @@ angular.module('kendo.window', [])
                     body.focus();
                 }
             }
-
             $modalStack.open = function (windowInstance, modal) {
                 var modalOpener = $document[0].activeElement;
-
                 openedWindows.add(windowInstance, {
                     deferred: modal.deferred,
                     renderDeferred: modal.renderDeferred,
                     openedDeferred: modal.openedDeferred,
                     modalScope: modal.scope,
                     options: modal.options,
+                    onClose: windowInstance.onClose,
+                    onResize: windowInstance.onResize,
+                    onMaximize: windowInstance.onMaximize,
+                    onMinimize: windowInstance.onMinimize
                 });
-
                 var body = $document.find('body').eq(0);
                 var angularDomEl = angular.element('<div k-window-frame="modal-window" style="display:none;"></div>');
                 angularDomEl.attr({
@@ -219,14 +247,13 @@ angular.module('kendo.window', [])
                 }
             };
             return $modalStack;
-        }])
+        }
+    ])
     .provider('$kWindow', function () {
         var $modalProvider = {
-            options: {
-            },
+            options: {},
             $get: ['$injector', '$rootScope', '$q', '$templateRequest', '$controller', '$kModalStack',
                 function ($injector, $rootScope, $q, $templateRequest, $controller, $modalStack) {
-
                     function getTemplatePromise(options) {
                         return options.template ? $q.when(options.template) :
                             $templateRequest(angular.isFunction(options.templateUrl) ? (options.templateUrl)() : options.templateUrl);
@@ -262,7 +289,12 @@ angular.module('kendo.window', [])
                                 result: modalResultDeferred.promise,
                                 opened: modalOpenedDeferred.promise,
                                 rendered: modalRenderDeferred.promise,
+                                onClose: null,
+                                onResize: null,
+                                onMinimize: null,
+                                onMaximize: null,
                                 options: modalOptions.options,
+                                cancelResult: modalOptions.cancelResult,
                                 close: function (result) {
                                     return $modalStack.close(windowInstance, result);
                                 },
@@ -338,7 +370,6 @@ angular.module('kendo.window', [])
                     };
                     return $modal;
                 }
-
             ]
         };
         return $modalProvider;
