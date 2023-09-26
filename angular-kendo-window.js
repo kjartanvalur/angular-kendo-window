@@ -56,7 +56,7 @@ angular.module('kendo.window', [])
                 },
                 replace: true,
                 transclude: true,
-                template: '<div id="myKendoWindow' + $modalStack.length + '" kendo-window="myKendoWindow" k-options="options" modal-render="{{$isRendered}}" tabindex="-1" role="dialog"><div><div k-window-transclude></div></div></div>',
+                template: '<div kendo-window="myKendoWindow" class="custom-kendo-window" k-options="options" modal-render="{{$isRendered}}" tabindex="-1" role="dialog"><div><div k-window-transclude></div></div></div>',
                 link: function (scope, element, attrs) {
                     var windowInstance = $modalStack.getTop().value;
                     var deactivateFunction = windowInstance.options.deactivate;
